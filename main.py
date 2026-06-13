@@ -8,6 +8,8 @@ from vertexai import generative_models
 
 app = Flask(__name__)
 
+DEFAULT_PROMPT = "Write a short poem about programming in 5 words."
+
 # Initialize Vertex AI
 try:
     credentials, project = google.auth.default()
@@ -51,10 +53,12 @@ def generate():
         prompt = request.args.get('prompt')
 
     if not prompt:
-        return jsonify({"error": "Missing 'prompt' parameter."}), 400
+        prompt = DEFAULT_PROMPT
 
     try:
         response = model.generate_content(prompt)
+        print(f"Prompt: {prompt}")
+        print(f"Generated Response: {response.text}")
         return jsonify({
             "prompt": prompt,
             "response": response.text
