@@ -1,11 +1,27 @@
 steps:
   # Build the container image using the Dockerfile
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/vertex-ai-gemini-server', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/vertex-ai-gemini-server:$COMMIT_SHA', '.']
+
+  # 2. Push the image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/vertex-ai-gemini-server:$COMMIT_SHA']
+  
+  # Deploy the container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'vertex-ai-gemini-server'
+      - '--image=gcr.io/$PROJECT_ID/vertex-ai-gemini-server:$COMMIT_SHA'
+      - '--region=us-central1'
+      - '--ingress=internal'
+      - '--no-allow-unauthenticated'
 
 # Push the image to Container Registry
 images:
-  - 'gcr.io/$PROJECT_ID/vertex-ai-gemini-server'
+  - 'gcr.io/$PROJECT_ID/vertex-ai-gemini-server:$COMMIT_SHA'
 
 # Use Cloud Logging only to resolve custom service account logging permissions issues
 options:
