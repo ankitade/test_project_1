@@ -8,7 +8,7 @@ from vertexai import generative_models
 
 app = Flask(__name__)
 
-DEFAULT_PROMPT = "Write a short poem about programming in 5 words."
+DEFAULT_PROMPT = "Write a long poem about programming in 1500 words."
 
 # Initialize Vertex AI
 try:
